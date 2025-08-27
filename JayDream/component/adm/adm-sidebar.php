@@ -10,14 +10,14 @@ $componentName = str_replace(".php", "", basename(__FILE__));
                 <div class="sidebar-brand-icon rotate-n-15">
                     <i class="fas fa-laugh-wink"></i>
                 </div>
-                <div class="sidebar-brand-text mx-3">SB Admin <sup>2</sup></div>
+                <div class="sidebar-brand-text mx-3">{{site.site_name}}</div>
             </a>
 
             <!-- Divider -->
             <hr class="sidebar-divider my-0">
 
             <!-- Nav Item - Dashboard -->
-            <li class="nav-item" :class="{active : url == 'adm-main-index'}">
+            <li class="nav-item" :class="{active : component == 'adm-main-index'}">
                 <a class="nav-link" href="/adm">
                     <i class="fas fa-fw fa-tachometer-alt"></i>
                     <span>대시보드</span></a>
@@ -31,15 +31,15 @@ $componentName = str_replace(".php", "", basename(__FILE__));
                     최고관리자 메뉴
                 </div>
 
-                <li class="nav-item" :class="{active : url == 'adm-main-site'}">
-                    <a class="nav-link" href="/adm?url=adm-main-site">
+                <li class="nav-item" :class="{active : component == 'adm-main-site'}">
+                    <a class="nav-link" href="/adm?component=adm-main-site">
                         <i class="fas fa-fw fa-wrench"></i>
                         <span>사이트 설정</span>
                     </a>
                 </li>
 
-                <li class="nav-item">
-                    <a class="nav-link" href="charts.html">
+                <li class="nav-item" :class="{active : component == 'adm-category-main'}">
+                    <a class="nav-link" href="/adm?component=adm-category-main">
                         <i class="fas fa-fw fa-wrench"></i>
                         <span>카테고리</span>
                     </a>
@@ -70,10 +70,11 @@ $componentName = str_replace(".php", "", basename(__FILE__));
                 </div>
             </li>
 
-            <li class="nav-item">
-                <a class="nav-link" href="tables.html">
+            <li class="nav-item" :class="{active : component == 'adm-user-main'}">
+                <a class="nav-link" href="/adm?component=adm-user-main">
                     <i class="fas fa-user-tie"></i>
-                    <span>유저</span></a>
+                    <span>유저</span>
+                </a>
             </li>
 
             <!-- Nav Item - Pages Collapse Menu -->
@@ -124,8 +125,9 @@ $componentName = str_replace(".php", "", basename(__FILE__));
             template: "#<?=$componentName?>-template",
             props: {
                 primary: {type: String, default: ""},
-                url: {type: String, default: ""},
-                user: {type: Object, default: ""},
+                component: {type: String, default: ""},
+                user: {type: Object, default: {}},
+                site: {type: Object, default: {}},
             },
             data: function () {
                 return {

@@ -5,7 +5,7 @@ $componentName = str_replace(".php","",basename(__FILE__));
     <div v-if="load">
         <div id="wrapper">
 
-            <adm-sidebar :url="url" :user="user"></adm-sidebar>
+            <adm-sidebar :component="component" :user="user" :site="site"></adm-sidebar>
             <!-- End of Sidebar -->
 
             <!-- Content Wrapper -->
@@ -16,7 +16,7 @@ $componentName = str_replace(".php","",basename(__FILE__));
 
                     <adm-topbar :user="user"></adm-topbar>
 
-                    <component :is="url"></component>
+                    <component :is="component"></component>
                 </div>
                 <!-- End of Main Content -->
 
@@ -50,7 +50,7 @@ $componentName = str_replace(".php","",basename(__FILE__));
             template: "#<?=$componentName?>-template",
             props: {
                 primary : {type : String, default : ""},
-                url : {type : String, default : ""},
+                component : {type : String, default : ""},
             },
             data: function () {
                 return {
@@ -60,6 +60,9 @@ $componentName = str_replace(".php","",basename(__FILE__));
 
                     user: {},
                     rows : [],
+
+                    site : {},
+                    sessions : {},
                 };
             },
             async created() {
@@ -77,6 +80,7 @@ $componentName = str_replace(".php","",basename(__FILE__));
                 }
 
                 await this.getUser();
+                this.site = await this.$getData({table : "site",});
 
                 this.load = true;
 

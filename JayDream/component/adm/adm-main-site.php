@@ -31,7 +31,7 @@ $componentName = str_replace(".php","",basename(__FILE__));
                             </div>
                             <div class="form-group col-md-6">
                                 <label for="adminPw" class="text-primary font-weight-bold">관리자 PW</label>
-                                <input type="password" class="form-control" id="adminPw" name="admin_pw" placeholder="비밀번호 입력" autocomplete="new-password">
+                                <input type="text" class="form-control" placeholder="비밀번호 입력" v-model="user_pw">
                             </div>
                         </div>
 
@@ -88,6 +88,8 @@ $componentName = str_replace(".php","",basename(__FILE__));
 
                     row: {},
                     rows : [],
+
+                    user_pw : "",
                 };
             },
             async created() {
@@ -118,6 +120,24 @@ $componentName = str_replace(".php","",basename(__FILE__));
                         await this.$jd.lib.alert("사이트 이름을 입력해주세요.");
                         return false;
                     }
+
+                    if(this.user_pw) {
+                        await this.$postData({
+                            $table : "user",
+                            primary : 2,
+                            user_pw_re : this.user_pw
+                        },{
+                            hashes: [ // (추가) * 대입방식 row[alias] 값이 암호화되서 row[column]에 대입된다
+                                {
+                                    column: "user_pw",
+                                    alias: "user_pw_re",
+                                }
+                            ],
+                            return : true
+                        })
+                    }
+
+
                     await this.$postData(this.row)
                 }
             },

@@ -1,5 +1,9 @@
 <?php
-include_once "../JayDream/init.php"
+include_once "../JayDream/init.php";
+
+$model = new \JayDream\Model("site");
+
+$site = $model->get()['data'][0];
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -12,7 +16,7 @@ include_once "../JayDream/init.php"
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>SB Admin 2 - Dashboard</title>
+    <title><?=$site['site_name']?></title>
 
     <!-- Custom fonts for this template-->
     <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">

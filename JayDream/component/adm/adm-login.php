@@ -68,13 +68,18 @@ $componentName = str_replace(".php","",basename(__FILE__));
                     user_id : "",
                     user_pw : "",
 
-                    sessions : {}
+                    sessions : {},
                 };
             },
             async created() {
                 this.component_idx = this.$jd.lib.generateUniqueId();
             },
             async mounted() {
+               if(!await this.checkAllow()) {
+                   await this.$jd.lib.alert("허용되지 않은 ip입니다.");
+                   this.$jd.lib.href("/")
+                   return false;
+               }
                 this.sessions = (await this.$jd.lib.ajax("session_get", {
                     admin_idx: "",
                 }, "/JayDream/api.php")).sessions;
@@ -94,6 +99,20 @@ $componentName = str_replace(".php","",basename(__FILE__));
 
             },
             methods: {
+                async checkAllow() {
+                    let user_ip = (await this.$jd.lib.ajax("get_ip", {}, "/JayDream/api.php")).ip;
+                    let allow_ip = (await this.$getData({table : "site",})).allow_ip;
+
+                    if(allow_ip.length == 0) {
+                        return true;
+                    }else {
+                        if (allow_ip.includes(user_ip)) {
+                            return true;
+                        }
+                    }
+
+                    return false;
+                },
                 async getUser() {
                     if(!this.user_id) {
                         await this.$jd.lib.alert("아이디를 입력해주세요.")
@@ -122,7 +141,7 @@ $componentName = str_replace(".php","",basename(__FILE__));
                                 value: this.user_pw,              // LIKE일시 %% 필수 || relations일시  $parent.idx
                                 logical: "AND",         // AND,OR,AND NOT
                                 operator: "=",          // = ,!= >= <=, LIKE,
-                                encrypt: false,        // true시 벨류가 암호화된 값으로 들어감
+                                encrypt: true,        // true시 벨류가 암호화된 값으로 들어감
                             },
                         ],
                     });
