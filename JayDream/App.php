@@ -134,7 +134,7 @@ class App {
 
         if(in_array('swiper',$plugins)) {
             if(!in_array("swiper",self::$PLUGINS)) {
-                //echo '<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">';
+                echo '<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">';
                 echo '<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>';
                 array_push(self::$PLUGINS,"swiper");
             }
@@ -144,7 +144,7 @@ class App {
     function componentLoad($path) {
         if($path[0] != "/") $path = "/".$path;
 
-        $path = Config::$ROOT."/JayDream/component".$path;
+        $path = Config::$ROOT."/component".$path;
 
         if(is_file($path)) {
             include_once($path);

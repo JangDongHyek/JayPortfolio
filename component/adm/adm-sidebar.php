@@ -56,7 +56,7 @@ $componentName = str_replace(".php", "", basename(__FILE__));
                 관리자 메뉴
             </div>
 
-            <li class="nav-item">
+            <li class="nav-item" :class="{active : component == 'adm-slide'}">
                 <a class="nav-link" :class="{collapsed : !show2}" data-toggle="collapse" data-target="#collapsePages" @click="show2 = !show2"
                    aria-expanded="true" aria-controls="collapsePages">
                     <i class="fas fa-fw fa-wrench"></i>
@@ -64,7 +64,7 @@ $componentName = str_replace(".php", "", basename(__FILE__));
                 </a>
                 <div id="collapsePages" class="collapse" :class="{show : show2}">
                     <div class="bg-white py-2 collapse-inner rounded">
-                        <a class="collapse-item" href="login.html">슬라이드</a>
+                        <a class="collapse-item" :class="{active : component == 'adm-slide'}" href="/adm?component=adm-slide">슬라이드</a>
                         <a class="collapse-item" href="login.html">상품</a>
                     </div>
                 </div>
@@ -148,6 +148,8 @@ $componentName = str_replace(".php", "", basename(__FILE__));
             async mounted() {
                 //this.row = await this.$getData({table : "",});
                 //await this.$getsData({table : "",},this.rows);
+
+                if(this.component == 'adm-slide') this.show2 = true;
 
                 this.load = true;
 

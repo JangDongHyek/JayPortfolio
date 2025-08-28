@@ -1,5 +1,7 @@
 </body>
 
 <?php
-$jd->vueLoad("app");
+$jd->vueLoad("app",["swiper"]);
 $jd->componentLoad("/main");
+$jd->componentLoad("/inc");
+$jd->componentLoad("/core");

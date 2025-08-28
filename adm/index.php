@@ -16,4 +16,5 @@ include_once "./adm_footer.php";
 $jd->componentLoad("/adm/category");
 $jd->componentLoad("/adm/user");
 $jd->componentLoad("/external");
+$jd->componentLoad("/adm/slide");
 ?>
