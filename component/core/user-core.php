@@ -3,9 +3,9 @@ $componentName = str_replace(".php","",basename(__FILE__));
 ?>
 <script type="text/x-template" id="<?=$componentName?>-template">
     <div v-if="load">
-        <inc-nav></inc-nav>
+        <inc-nav :user="user"></inc-nav>
 
-        <component :is="component"></component>
+        <component :is="component" :user="user"></component>
 
         <inc-footer></inc-footer>
     </div>
@@ -28,13 +28,29 @@ $componentName = str_replace(".php","",basename(__FILE__));
 
                     row: {},
                     rows : [],
+
+                    user : null,
                 };
             },
             async created() {
                 this.component_idx = this.$jd.lib.generateUniqueId();
             },
             async mounted() {
-                //this.row = await this.$getData({table : "",});
+                this.sessions = (await this.$jd.lib.ajax("session_get", {
+                    user_idx: "",
+                }, "/JayDream/api.php")).sessions;
+
+                if(this.sessions.user_idx) {
+                    this.user = await this.$getData({
+                        table : "user",
+
+                        where: [
+                            {column: "idx",value: this.sessions.user_idx},
+                        ],
+                    });
+                }
+
+
                 //await this.$getsData({table : "",},this.rows);
 
                 this.load = true;

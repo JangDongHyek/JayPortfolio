@@ -14,8 +14,16 @@ $componentName = str_replace(".php","",basename(__FILE__));
                     <ul class="navbar-nav text-uppercase ms-auto py-4 py-lg-0">
                         <li class="nav-item"><a class="nav-link" href="#services">상품</a></li>
                         <li class="nav-item"><a class="nav-link" href="#portfolio">게시판</a></li>
-                        <li class="nav-item"><a class="nav-link" href="/user/login.php">로그인</a></li>
-                        <li class="nav-item"><a class="nav-link" href="#team">마이페이지</a></li>
+
+                        <template v-if="user">
+                            <li class="nav-item"><a class="nav-link" href="#team">마이페이지</a></li>
+                            <li class="nav-item"><a class="nav-link" @click="logout">로그아웃</a></li>
+                        </template>
+                        <template v-if="!user">
+                            <li class="nav-item"><a class="nav-link" href="/user/login.php">로그인</a></li>
+                        </template>
+
+
                     </ul>
                 </div>
             </div>
@@ -30,6 +38,7 @@ $componentName = str_replace(".php","",basename(__FILE__));
             template: "#<?=$componentName?>-template",
             props: {
                 primary : {type : String, default : ""},
+                user : {type : Object, default : null},
             },
             data: function () {
                 return {
@@ -58,7 +67,13 @@ $componentName = str_replace(".php","",basename(__FILE__));
 
             },
             methods: {
+                async logout() {
+                    await this.$jd.lib.ajax("session_set", {
+                        user_idx : ""
+                    }, "/JayDream/api.php");
 
+                    this.$jd.lib.href("/")
+                },
             },
             computed: {
 

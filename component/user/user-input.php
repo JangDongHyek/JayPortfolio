@@ -8,26 +8,61 @@ $componentName = str_replace(".php","",basename(__FILE__));
 
             <div class="form-group">
                 <label for="user_id">아이디</label>
-                <input type="text" id="user_id" name="user_id" required>
+                <input type="text" v-model="row.user_id">
             </div>
             <div class="form-group">
                 <label for="user_pw">비밀번호</label>
-                <input type="password" id="user_pw" name="user_pw" required>
+                <input type="password" v-model="row.user_pw1">
             </div>
             <div class="form-group">
                 <label for="user_pw2">비밀번호 확인</label>
-                <input type="password" id="user_pw2" name="user_pw2" required>
+                <input type="password" v-model="row.user_pw2">
             </div>
             <div class="form-group">
                 <label for="user_name">이름</label>
-                <input type="text" id="user_name" name="user_name" required>
+                <input type="text" v-model="row.name">
             </div>
             <div class="form-group">
                 <label for="user_email">이메일</label>
-                <input type="email" id="user_email" name="user_email" required>
+                <input type="email" v-model="row.email">
             </div>
-            <button type="submit" class="btn">회원가입</button>
+
+            <div class="form-group">
+                <label for="zipcode">우편번호</label>
+                <div style="display: flex; gap: 0.5rem;">
+                    <input type="text" v-model="row.zipcode" placeholder="우편번호" readonly required @click="modal.status = true;">
+                    <button type="button" class="btn small" @click="modal.status = true;">우편번호 찾기</button>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="address1">기본주소</label>
+                <input type="text" v-model="row.address1" placeholder="기본주소" readonly required @click="modal.status = true;">
+            </div>
+
+            <div class="form-group">
+                <label for="address2">상세주소</label>
+                <input type="text" v-model="row.address2" placeholder="상세주소" required>
+            </div>
+            <button type="button" class="btn" @click="postUser">회원가입</button>
         </div>
+
+        <external-bs-modal v-model="modal">
+            <template v-slot:header>
+
+            </template>
+
+            <!-- body -->
+            <template v-slot:default>
+                <external-daum-postcode v-model="row" field1="address1" field2="zipcode"
+                                        @close="modal.status = false;"></external-daum-postcode>
+            </template>
+
+
+            <template v-slot:footer>
+
+            </template>
+        </external-bs-modal>
     </div>
 
     <div v-if="!load"><div class="loader"></div></div>
@@ -45,8 +80,26 @@ $componentName = str_replace(".php","",basename(__FILE__));
                     component_name : "<?=$componentName?>",
                     component_idx: "",
 
-                    row: {},
+                    row: {
+                        user_id : "",
+                        user_pw1 : "",
+                        user_pw2 : "",
+                        name : "",
+                        email : "",
+                        zipcode : "",
+                        address1 : "",
+                        address2 : "",
+                        level : 2,
+                    },
                     rows : [],
+
+                    modal: {
+                        id : "", // modal의 id값을 설정합니다 빈값이라면 고유값을 랜덤으로 생성해 지정합니다
+                        class_1: "", // modal fade 부분에 클래스를 추가합니다 ex) "one_class two_class"
+                        class_2: "", // modal-dialog 부분에 클래스를 추가합니다
+                        status: false,
+                        primary : "",
+                    },
                 };
             },
             async created() {
@@ -66,7 +119,70 @@ $componentName = str_replace(".php","",basename(__FILE__));
 
             },
             methods: {
+                async postUser() {
+                    if(!this.row.user_id) {
+                        await this.$jd.lib.alert("아이디를 입력해주세요.");
+                        return false;
+                    }
+                    if(this.$jd.lib.checkUserId(this.row.user_id)) {
+                        await this.$jd.lib.alert("아이디는 영문 + 숫자 조합 4~20자로 해야합니다.");
+                        return false;
+                    }
+                    if(!this.row.user_pw1) {
+                        await this.$jd.lib.alert("비밀번호를 입력해주세요.");
+                        return false;
+                    }
+                    if(!this.row.user_pw2) {
+                        await this.$jd.lib.alert("비밀번호 확인을 입력해주세요.");
+                        return false;
+                    }
 
+                    if(this.row.user_pw1 != this.row.user_pw2) {
+                        await this.$jd.lib.alert("비밀번호와 비밀번호확인이 다릅니다.");
+                        return false;
+                    }
+
+                    if(!this.row.name) {
+                        await this.$jd.lib.alert("이름을 입력해주세요.");
+                        return false;
+                    }
+                    if(!this.row.email) {
+                        await this.$jd.lib.alert("이메일을 입력해주세요.");
+                        return false;
+                    }
+                    if(this.$jd.lib.checkEmail(this.row.email)) {{
+                        await this.$jd.lib.alert("정확한 이메일을 입력해주세요.");
+                        return false;
+                    }}
+                    if(!this.row.zipcode) {
+                        await this.$jd.lib.alert("주소를 입력해주세요.");
+                        return false;
+                    }
+
+                    await this.$postData(this.row,{
+                        table : "user",
+                        hashes: [ // (추가) * 대입방식 row[alias] 값이 암호화되서 row[column]에 대입된다
+                            {
+                                column: "user_pw",
+                                alias: "user_pw1",
+                            }
+                        ],
+
+                        exists: [ // (추가) 조건에 해당하는 데이터가 있는지 있다면 alert으로 message 노출
+                            { // 최상단 filter 방식으로 똑같이 넣어주면된다
+                                table: "user",
+
+                                where: [
+                                    {column: "user_id",value: this.row.user_id},
+                                ],
+
+                                message: "해당 아이디는 이미 존재합니다.",
+                            }
+                        ],
+
+                        href : "/user/login.php",
+                    });
+                }
             },
             computed: {
 
@@ -87,6 +203,8 @@ $componentName = str_replace(".php","",basename(__FILE__));
         align-items: center;
         height: 100vh;
     }
+
+
     .signup-card {
         background: #fff;
         border-radius: 8px;

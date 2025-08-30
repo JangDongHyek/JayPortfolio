@@ -8,13 +8,13 @@ $componentName = str_replace(".php","",basename(__FILE__));
             <form action="/user/login.php" method="post">
                 <div class="form-group">
                     <label for="user_id">아이디</label>
-                    <input type="text" id="user_id" name="user_id" required autocomplete="username">
+                    <input type="text" v-model="user_id" @keyup.enter="login">
                 </div>
                 <div class="form-group">
                     <label for="user_pw">비밀번호</label>
-                    <input type="password" id="user_pw" name="user_pw" required autocomplete="current-password">
+                    <input type="password" v-model="user_pw" @keyup.enter="login">
                 </div>
-                <button type="button" class="btn">로그인</button>
+                <button type="button" class="btn" @click="login">로그인</button>
                 <button type="button" class="btn" @click="$jd.lib.href('/user/join.php')">회원가입</button>
             </form>
         </div>
@@ -37,13 +37,15 @@ $componentName = str_replace(".php","",basename(__FILE__));
 
                     row: {},
                     rows : [],
+
+                    user_id : "",
+                    user_pw : "",
                 };
             },
             async created() {
                 this.component_idx = this.$jd.lib.generateUniqueId();
             },
             async mounted() {
-                //this.row = await this.$getData({table : "",});
                 //await this.$getsData({table : "",},this.rows);
 
                 this.load = true;
@@ -56,7 +58,47 @@ $componentName = str_replace(".php","",basename(__FILE__));
 
             },
             methods: {
+                async login() {
+                    if(!this.user_id) {
+                        await this.$jd.lib.alert("아이디를 입력해주세요.");
+                        return false;
+                    }
+                    if(!this.user_pw) {
+                        await this.$jd.lib.alert("비밀번호를 입력해주세요.");
+                        return false;
+                    }
+                    this.row = await this.$getData({
+                        table : "user",
 
+                        where: [
+                            {
+                                column: "user_id",             // join 조건시 user.idx
+                                value: this.user_id,              // LIKE일시 %% 필수 || relations일시  $parent.idx , 공백일경우 __null__ , null 값인경우 null
+                                logical: "AND",         // AND,OR,AND NOT
+                                operator: "=",          // = ,!= >= <=, LIKE,
+                                encrypt: false,        // true시 벨류가 암호화된 값으로 들어감
+                            },
+                            {
+                                column: "user_pw",             // join 조건시 user.idx
+                                value: this.user_pw,              // LIKE일시 %% 필수 || relations일시  $parent.idx , 공백일경우 __null__ , null 값인경우 null
+                                logical: "AND",         // AND,OR,AND NOT
+                                operator: "=",          // = ,!= >= <=, LIKE,
+                                encrypt: true,        // true시 벨류가 암호화된 값으로 들어감
+                            },
+                        ],
+                    });
+
+                    if(!this.row) {
+                        await this.$jd.lib.alert("정보에 해당하는 계정이없습니다.");
+                        return false;
+                    }else {
+                        await this.$jd.lib.ajax("session_set", {
+                            user_idx : this.row.idx
+                        }, "/JayDream/api.php");
+
+                        this.$jd.lib.href("/")
+                    }
+                },
             },
             computed: {
 
@@ -66,7 +108,7 @@ $componentName = str_replace(".php","",basename(__FILE__));
             }
         }});
 </script>
-
+ 
 <style>
     body {
         margin: 0;
