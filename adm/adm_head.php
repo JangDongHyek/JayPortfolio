@@ -26,6 +26,7 @@ $site = $model->get()['data'][0];
 
     <!-- Custom styles for this template-->
     <link href="css/sb-admin-2.min.css" rel="stylesheet">
+    <link href="css/default.css" rel="stylesheet">
 
 </head>
 

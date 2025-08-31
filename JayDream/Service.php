@@ -152,7 +152,12 @@ class Service {
 
             $count = $model->setFilter($filter)->get($filter)['count'];
 
-            if($count) Lib::error($filter['message']);
+            if($count) {
+                if($filter['message']) Lib::error($filter['message']);
+                else return true;
+            }
+
+            return false;
         }
     }
 

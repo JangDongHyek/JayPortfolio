@@ -3,21 +3,7 @@ $componentName = str_replace(".php","",basename(__FILE__));
 ?>
 <script type="text/x-template" id="<?=$componentName?>-template">
     <div v-if="load">
-        <external-bs-modal v-model="modelValue" @update:modelValue="value => $emit('update:modelValue', value)">
-            <template v-slot:header>
-
-            </template>
-
-            <!-- body -->
-            <template v-slot:default>
-
-            </template>
-
-
-            <template v-slot:footer>
-
-            </template>
-        </external-bs-modal>
+        <component :is="isComponent" :setting="row" :user="user" :primary="primary"></component>
     </div>
 
     <div v-if="!load"><div class="loader"></div></div>
@@ -27,7 +13,10 @@ $componentName = str_replace(".php","",basename(__FILE__));
     JayDream_components.push({name : "<?=$componentName?>",object : {
             template: "#<?=$componentName?>-template",
             props: {
-                modelValue : {type: Object, default: {}},
+                primary : {type : String, default : ""},
+                mode : {type : String, default : ""},
+                setting_idx : {type : String, default : ""},
+                user : {type : Object, default : null},
             },
             data: function () {
                 return {
@@ -37,12 +26,23 @@ $componentName = str_replace(".php","",basename(__FILE__));
 
                     row: {},
                     rows : [],
+
+                    search_type : "",
+                    search_value : "",
                 };
             },
             async created() {
                 this.component_idx = this.$jd.lib.generateUniqueId();
             },
             async mounted() {
+                this.row = await this.$getData({
+                    table : "board_setting",
+
+                    where: [
+                        {column: "primary",value: this.setting_idx},
+                    ],
+                });
+                //await this.$getsData({table : "",},this.rows);
                 this.load = true;
 
                 this.$nextTick(async () => {
@@ -56,22 +56,16 @@ $componentName = str_replace(".php","",basename(__FILE__));
 
             },
             computed: {
-
+                isComponent() {
+                    return `board-${this.row.skin}-${this.mode}`
+                }
             },
             watch: {
-                async "modelValue.status"(value, old_value) {
-                    if (value) {
-                        if(this.modelValue.primary) {
-                            // this.row = await this.$getData({
-                            //     table : "project_base",
-                            //
-                            //     where: [
-                            //         {column: "primary",value: this.modelValue.primary},
-                            //     ],
-                            // });
-                        }
-                    }
-                }
+
             }
         }});
 </script>
+
+<style>
+
+</style>

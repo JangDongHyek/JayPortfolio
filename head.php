@@ -1,5 +1,8 @@
 <?php
-include_once $_SERVER['DOCUMENT_ROOT']."/JayDream/init.php"
+include_once $_SERVER['DOCUMENT_ROOT']."/JayDream/init.php";
+
+$model = new \JayDream\Model("site");
+$site = $model->get()['data'][0];
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -8,7 +11,7 @@ include_once $_SERVER['DOCUMENT_ROOT']."/JayDream/init.php"
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
     <meta name="description" content="" />
     <meta name="author" content="" />
-    <title>Agency - Start Bootstrap Theme</title>
+    <title><?=$site['site_name']?></title>
     <!-- Favicon-->
     <link rel="icon" type="image/x-icon" href="/assets/favicon.ico" />
     <!-- Font Awesome icons (free version)-->

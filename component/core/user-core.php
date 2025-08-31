@@ -5,7 +5,7 @@ $componentName = str_replace(".php","",basename(__FILE__));
     <div v-if="load">
         <inc-nav :user="user"></inc-nav>
 
-        <component :is="component" :user="user"></component>
+        <component :is="component" :user="user" :setting_idx="setting_idx" :mode="mode" :primary="primary"></component>
 
         <inc-footer></inc-footer>
     </div>
@@ -19,6 +19,8 @@ $componentName = str_replace(".php","",basename(__FILE__));
             props: {
                 primary : {type : String, default : ""},
                 component : {type : String, default : ""},
+                setting_idx : {type : String, default : ""},
+                mode : {type : String, default : ""},
             },
             data: function () {
                 return {

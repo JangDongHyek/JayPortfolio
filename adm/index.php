@@ -17,4 +17,6 @@ $jd->componentLoad("/adm/category");
 $jd->componentLoad("/adm/user");
 $jd->componentLoad("/external");
 $jd->componentLoad("/adm/slide");
+$jd->componentLoad("/adm/board");
+
 ?>

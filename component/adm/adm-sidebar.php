@@ -38,6 +38,13 @@ $componentName = str_replace(".php", "", basename(__FILE__));
                     </a>
                 </li>
 
+                <li class="nav-item" :class="{active : component == 'adm-board-list'}">
+                    <a class="nav-link" href="/adm?component=adm-board-list">
+                        <i class="fas fa-fw fa-wrench"></i>
+                        <span>게시판설정</span>
+                    </a>
+                </li>
+
                 <li class="nav-item" :class="{active : component == 'adm-category-main'}">
                     <a class="nav-link" href="/adm?component=adm-category-main">
                         <i class="fas fa-fw fa-wrench"></i>

@@ -13,7 +13,7 @@ $componentName = str_replace(".php","",basename(__FILE__));
                 <div class="collapse navbar-collapse" id="navbarResponsive">
                     <ul class="navbar-nav text-uppercase ms-auto py-4 py-lg-0">
                         <li class="nav-item"><a class="nav-link" href="#services">상품</a></li>
-                        <li class="nav-item"><a class="nav-link" href="#portfolio">게시판</a></li>
+                        <li class="nav-item"><a class="nav-link" href="/user/board.php?mode=list&setting_idx=4">게시판</a></li>
 
                         <template v-if="user">
                             <li class="nav-item"><a class="nav-link" href="#team">마이페이지</a></li>
