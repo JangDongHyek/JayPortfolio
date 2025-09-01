@@ -14,6 +14,7 @@ $component = $_GET['component'] ??  "adm-main-index";;
 <?php
 include_once "./adm_footer.php";
 $jd->componentLoad("/adm/category");
+$jd->componentLoad("/adm/order");
 $jd->componentLoad("/adm/user");
 $jd->componentLoad("/adm/history");
 $jd->componentLoad("/adm/product");

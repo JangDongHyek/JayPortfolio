@@ -2,7 +2,7 @@
 $componentName = str_replace(".php","",basename(__FILE__));
 ?>
 <script type="text/x-template" id="<?=$componentName?>-template">
-    <div v-if="load">
+    <div v-if="load" style="margin-top: 100px;">
         <div class="signup-card">
             <h2>회원가입</h2>
 
@@ -25,6 +25,10 @@ $componentName = str_replace(".php","",basename(__FILE__));
             <div class="form-group">
                 <label for="user_email">이메일</label>
                 <input type="email" v-model="row.email">
+            </div>
+            <div class="form-group">
+                <label for="user_email">연락처</label>
+                <input type="text" v-model="row.phone" v-phone>
             </div>
 
             <div class="form-group">
@@ -86,6 +90,7 @@ $componentName = str_replace(".php","",basename(__FILE__));
                         user_pw2 : "",
                         name : "",
                         email : "",
+                        phone : "",
                         zipcode : "",
                         address1 : "",
                         address2 : "",

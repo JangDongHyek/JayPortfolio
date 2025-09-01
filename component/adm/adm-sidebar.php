@@ -73,7 +73,6 @@ $componentName = str_replace(".php", "", basename(__FILE__));
                     <div class="bg-white py-2 collapse-inner rounded">
                         <a class="collapse-item" :class="{active : component == 'adm-slide'}" href="/adm?component=adm-slide">슬라이드</a>
                         <a class="collapse-item" :class="{active : component == 'adm-history'}" href="/adm?component=adm-history">연혁관리</a>
-                        <a class="collapse-item" href="login.html">상품</a>
                     </div>
                 </div>
             </li>
@@ -108,8 +107,8 @@ $componentName = str_replace(".php", "", basename(__FILE__));
                 </a>
             </li>
 
-            <li class="nav-item">
-                <a class="nav-link" href="tables.html">
+            <li class="nav-item" :class="{active : (component == 'adm-order-list' || component == 'adm-order-view')}">
+                <a class="nav-link" href="/adm?component=adm-order-list">
                     <i class="fas fa-list"></i>
                     <span>주문목록</span>
                 </a>

@@ -33,11 +33,15 @@ $componentName = str_replace(".php","",basename(__FILE__));
                     <input class="form-control" type="file" id="file" @change="$jd.vue.changeFile($event,row,'thumb')">
                 </div>
 
-                <div class="thumb-preview mt-3" v-if="row.thumb || row.$jd_file_thumb?.count > 0">
+                <div class="thumb-preview mt-3" v-if="row.thumb">
                     <template v-if="row.thumb">
                         올린이미지
                         <img :src="row.thumb.src" alt="썸네일 미리보기">
                     </template>
+
+                </div>
+
+                <div class="thumb-preview mt-3" v-if="!row.thumb && row.$jd_file_thumb?.count > 0">
                     <template v-if="row.$jd_file_thumb.count > 0">
                         기존 이미지
                         <img :src="$jd.url + row.$jd_file_thumb.data[0].src" alt="썸네일 미리보기">

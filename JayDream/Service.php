@@ -10,7 +10,7 @@ class Service {
         $model = new Model($filter['table']);
 
         //연관된 파일 가져오는
-        if($filter['file_db'] == "true") self::injectFileRelation($filter);
+        if(isset($filter['file_db']) && $filter['file_db'] == "true") self::injectFileRelation($filter);
 
         $object = $model->setFilter($filter)->get($filter);
         $ref = &$object;
@@ -80,6 +80,8 @@ class Service {
     private static function resolveRelations($obj,&$object) {
         if(isset($obj['relations'])) {
             foreach ($obj['relations'] as $filter) {
+                if(isset($filter['file_db']) && $filter['file_db'] == "true") self::injectFileRelation($filter);
+
                 $model = new Model($filter['table']);
                 $as = "$".$filter['table'];
                 if(isset($filter['as']) && $filter['as']) $as = "$".$filter['as'];

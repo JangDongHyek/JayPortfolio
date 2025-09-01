@@ -196,9 +196,11 @@ $componentName = str_replace(".php","",basename(__FILE__));
                         return false;
                     }
 
-                    if(!this.row.main_image) {
-                        await this.$jd.lib.alert("상품 이미지는 필수값입니다.");
-                        return false;
+                    if(!this.primary) {
+                        if(!this.row.main_image) {
+                            await this.$jd.lib.alert("상품 이미지는 필수값입니다.");
+                            return false;
+                        }
                     }
 
                     await this.$postData(this.row,{

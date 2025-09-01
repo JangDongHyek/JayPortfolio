@@ -12,13 +12,14 @@ $componentName = str_replace(".php","",basename(__FILE__));
                 </button>
                 <div class="collapse navbar-collapse" id="navbarResponsive">
                     <ul class="navbar-nav text-uppercase ms-auto py-4 py-lg-0">
-                        <li class="nav-item"><a class="nav-link" href="#services">상품</a></li>
+                        <li class="nav-item"><a class="nav-link" href="/user/product.php">상품</a></li>
                         <li class="nav-item"><a class="nav-link" href="/user/board.php?mode=list&setting_idx=4">일반게시판</a></li>
                         <li class="nav-item"><a class="nav-link" href="/user/board.php?mode=list&setting_idx=5">썸네일게시판</a></li>
 
                         <template v-if="user">
-                            <li class="nav-item"><a class="nav-link" href="#team">마이페이지</a></li>
+                            <li class="nav-item"><a class="nav-link" href="/user/order_list.php">주문목록</a></li>
                             <li class="nav-item"><a class="nav-link" @click="logout">로그아웃</a></li>
+                            <h4 style="color:white">{{user.name}}</h4>
                         </template>
                         <template v-if="!user">
                             <li class="nav-item"><a class="nav-link" href="/user/login.php">로그인</a></li>

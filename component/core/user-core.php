@@ -5,7 +5,9 @@ $componentName = str_replace(".php","",basename(__FILE__));
     <div v-if="load">
         <inc-nav :user="user"></inc-nav>
 
-        <component :is="component" :user="user" :setting_idx="setting_idx" :mode="mode" :primary="primary"></component>
+        <component :is="component" :user="user" :setting_idx="setting_idx" :mode="mode" :primary="primary"
+        :first_category="first_category" :second_category="second_category" :third_category="third_category"
+        ></component>
 
         <inc-footer></inc-footer>
     </div>
@@ -21,6 +23,9 @@ $componentName = str_replace(".php","",basename(__FILE__));
                 component : {type : String, default : ""},
                 setting_idx : {type : String, default : ""},
                 mode : {type : String, default : ""},
+                first_category : {type : String, default : ""},
+                second_category : {type : String, default : ""},
+                third_category : {type : String, default : ""},
             },
             data: function () {
                 return {
