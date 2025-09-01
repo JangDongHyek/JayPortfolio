@@ -5,7 +5,7 @@ $componentName = str_replace(".php","",basename(__FILE__));
     <div v-if="load">
         <div id="wrapper">
 
-            <adm-sidebar :component="component" :user="user" :site="site"></adm-sidebar>
+            <adm-sidebar :component="component" :user="user" :site="site" :setting_idx="setting_idx"></adm-sidebar>
             <!-- End of Sidebar -->
 
             <!-- Content Wrapper -->
@@ -16,7 +16,7 @@ $componentName = str_replace(".php","",basename(__FILE__));
 
                     <adm-topbar :user="user"></adm-topbar>
 
-                    <component :is="component"></component>
+                    <component :is="component" :setting_idx="setting_idx" :mode="mode" :primary="primary" :component="component" :user="user"></component>
                 </div>
                 <!-- End of Main Content -->
 
@@ -51,6 +51,8 @@ $componentName = str_replace(".php","",basename(__FILE__));
             props: {
                 primary : {type : String, default : ""},
                 component : {type : String, default : ""},
+                setting_idx : {type : String, default : ""},
+                mode : {type : String, default : ""},
             },
             data: function () {
                 return {

@@ -72,6 +72,7 @@ $componentName = str_replace(".php", "", basename(__FILE__));
                 <div id="collapsePages" class="collapse" :class="{show : show2}">
                     <div class="bg-white py-2 collapse-inner rounded">
                         <a class="collapse-item" :class="{active : component == 'adm-slide'}" href="/adm?component=adm-slide">슬라이드</a>
+                        <a class="collapse-item" :class="{active : component == 'adm-history'}" href="/adm?component=adm-history">연혁관리</a>
                         <a class="collapse-item" href="login.html">상품</a>
                     </div>
                 </div>
@@ -85,7 +86,7 @@ $componentName = str_replace(".php", "", basename(__FILE__));
             </li>
 
             <!-- Nav Item - Pages Collapse Menu -->
-            <li class="nav-item">
+            <li class="nav-item" :class="{active : component == 'board-main'}">
                 <a class="nav-link" :class="{collapsed : !show1}" data-toggle="collapse" data-target="#collapsePages" @click="show1 = !show1"
                    aria-expanded="true" aria-controls="collapsePages">
                     <i class="fas fa-fw fa-folder"></i>
@@ -93,14 +94,15 @@ $componentName = str_replace(".php", "", basename(__FILE__));
                 </a>
                 <div id="collapsePages" class="collapse" :class="{show : show1}">
                     <div class="bg-white py-2 collapse-inner rounded">
-                        <a class="collapse-item" href="login.html">문의</a>
-                        <a class="collapse-item" href="login.html">자유게시판</a>
+                        <template v-for="item in settings">
+                            <a class="collapse-item" :href="getBoardUrl(item)" :class="{active : item.primary == setting_idx}">{{item.name}}</a>
+                        </template>
                     </div>
                 </div>
             </li>
 
-            <li class="nav-item">
-                <a class="nav-link" href="tables.html">
+            <li class="nav-item" :class="{active : (component == 'adm-product-list' || component == 'adm-product-input')}">
+                <a class="nav-link" href="/adm?component=adm-product-list">
                     <i class="fab fa-product-hunt"></i>
                     <span>상품</span>
                 </a>
@@ -133,6 +135,7 @@ $componentName = str_replace(".php", "", basename(__FILE__));
             props: {
                 primary: {type: String, default: ""},
                 component: {type: String, default: ""},
+                setting_idx: {type: String, default: ""},
                 user: {type: Object, default: {}},
                 site: {type: Object, default: {}},
             },
@@ -144,6 +147,7 @@ $componentName = str_replace(".php", "", basename(__FILE__));
 
                     row: {},
                     rows: [],
+                    settings : [],
 
                     show1 : false,
                     show2 : false,
@@ -155,8 +159,10 @@ $componentName = str_replace(".php", "", basename(__FILE__));
             async mounted() {
                 //this.row = await this.$getData({table : "",});
                 //await this.$getsData({table : "",},this.rows);
-
+                await this.getBoardSettings();
                 if(this.component == 'adm-slide') this.show2 = true;
+                if(this.component == 'adm-history') this.show2 = true;
+                if(this.component == 'board-main') this.show1 = true;
 
                 this.load = true;
 
@@ -167,7 +173,18 @@ $componentName = str_replace(".php", "", basename(__FILE__));
             updated() {
 
             },
-            methods: {},
+            methods: {
+                getBoardUrl(item) {
+                    return this.$jd.lib.normalizeUrl("/adm",{
+                        component : "board-main",
+                        mode : "list",
+                        setting_idx : item.primary
+                    })
+                },
+                async getBoardSettings() {
+                    await this.$getsData({table : "board_setting",},this.settings);
+                },
+            },
             computed: {},
             watch: {}
         }

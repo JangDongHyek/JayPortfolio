@@ -28,16 +28,32 @@ $componentName = str_replace(".php","",basename(__FILE__));
 
                 </div>
 
+                <div class="mb-4" v-if="setting.file_use">
+                    <label for="file" class="form-label">썸네일</label>
+                    <input class="form-control" type="file" id="file" @change="$jd.vue.changeFile($event,row,'thumb')">
+                </div>
+
+                <div class="thumb-preview mt-3" v-if="row.thumb || row.$jd_file_thumb?.count > 0">
+                    <template v-if="row.thumb">
+                        올린이미지
+                        <img :src="row.thumb.src" alt="썸네일 미리보기">
+                    </template>
+                    <template v-if="row.$jd_file_thumb.count > 0">
+                        기존 이미지
+                        <img :src="$jd.url + row.$jd_file_thumb.data[0].src" alt="썸네일 미리보기">
+                    </template>
+                </div>
+
                 <!-- 파일 첨부 -->
                 <div class="mb-4" v-if="setting.file_use">
                     <label for="file" class="form-label">파일 첨부</label>
                     <input class="form-control" type="file" id="file" @change="$jd.vue.changeFile($event,row,'upfiles')">
                 </div>
 
-                <div class="mb-4" v-if="row.upfiles?.length > 0 || row.$jd_file?.count > 0">
+                <div class="mb-4" v-if="row.upfiles?.length > 0 || row.$jd_file_upfiles?.count > 0">
                     <h6 class="mb-2">첨부된 파일</h6>
                     <ul class="list-group">
-                        <template v-if="row.$jd_file?.count > 0" v-for="item,index in row.$jd_file.data">
+                        <template v-if="row.$jd_file_upfiles?.count > 0" v-for="item,index in row.$jd_file_upfiles.data">
                             <li class="list-group-item d-flex justify-content-between align-items-center">
                                 {{item.name}}
                                 <button type="button" class="btn btn-sm btn-outline-danger" @click="$deleteData(item)">삭제</button>
@@ -86,6 +102,7 @@ $componentName = str_replace(".php","",basename(__FILE__));
                         user_idx : this.user?.primary,
                         name : "",
                         content : "",
+                        thumb : null,
                         upfiles : [],
                     },
                     rows : [],
@@ -111,6 +128,7 @@ $componentName = str_replace(".php","",basename(__FILE__));
                     this.row = await this.$getData({
                         table : "board",
                         file_db : true,
+                        file_keywords : ["upfiles","thumb"],
 
                         where: [
                             {column: "primary",value: this.primary},

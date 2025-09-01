@@ -3,17 +3,7 @@ $componentName = str_replace(".php","",basename(__FILE__));
 ?>
 <script type="text/x-template" id="<?=$componentName?>-template">
     <div v-if="load">
-        <!-- Masthead-->
-        <main-slide></main-slide>
 
-        <!-- Portfolio Grid-->
-        <main-category></main-category>
-        <!-- About-->
-        <main-history></main-history>
-
-
-        <!-- Contact-->
-        <main-contact></main-contact>
     </div>
 
     <div v-if="!load"><div class="loader"></div></div>

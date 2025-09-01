@@ -5,7 +5,7 @@ $componentName = str_replace(".php","",basename(__FILE__));
     <div v-if="load">
         <div class="container my-5">
             <div class="d-flex justify-content-between align-items-center mb-3">
-                <h3 class="mb-0">게시판</h3>
+                <h3 class="mb-0">{{setting.name}}</h3>
                 <!-- 검색 박스 -->
                 <!-- 검색 박스 (제목 밑, 왼쪽 정렬) -->
                 <div class="d-flex" role="search" style="max-width: 300px;">
@@ -22,6 +22,7 @@ $componentName = str_replace(".php","",basename(__FILE__));
                     <th style="width: 120px;">작성자</th>
                     <th style="width: 160px;">작성일</th>
                     <th style="width: 80px;">조회</th>
+                    <th style="width: 80px;">좋아요</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -30,7 +31,8 @@ $componentName = str_replace(".php","",basename(__FILE__));
                     <td class="text-start"><a :href="goView(item)">{{item.name}}</a></td>
                     <td>{{item.$user__name}}</td>
                     <td>{{item.insert_date.formatDate('yyyy-mm-dd')}}</td>
-                    <td>123</td>
+                    <td>{{item.total_view}}</td>
+                    <td>{{item.total_like}}</td>
                 </tr>
                 </tbody>
             </table>
@@ -51,6 +53,7 @@ $componentName = str_replace(".php","",basename(__FILE__));
             template: "#<?=$componentName?>-template",
             props: {
                 primary : {type : String, default : ""},
+                component : {type : String, default : ""},
                 setting : {type : Object, default : null},
                 user : {type : Object, default : null},
             },
@@ -106,7 +109,39 @@ $componentName = str_replace(".php","",basename(__FILE__));
                                 type: "LEFT",             // INNER, LEFT, RIGHT
                                 select_column: ["name"], // 조회할 컬럼 $table__column 식으로 as되서 들어간다 || "*"
                             },
+
+                            {
+                                table: "board_view",
+                                base: "idx",               // filter 테이블의 연결 key
+                                foreign: "board_idx",            // join 테이블의 연결 key
+                                type: "LEFT",             // INNER, LEFT, RIGHT
+                                select_column: ["idx"], // 조회할 컬럼 $table__column 식으로 as되서 들어간다 || "*"
+                            },
+
+                            {
+                                table: "board_like",
+                                base: "idx",               // filter 테이블의 연결 key
+                                foreign: "board_idx",            // join 테이블의 연결 key
+                                type: "LEFT",             // INNER, LEFT, RIGHT
+                                select_column: ["idx"], // 조회할 컬럼 $table__column 식으로 as되서 들어간다 || "*"
+                            },
                         ],
+
+                        group_bys: {
+                            by: ['board.idx'], // 그룹화 할 컬럼 * 앞에 테이블명시는 필수
+                            selects: [
+                                {
+                                    type: "COUNT", // 집계함수
+                                    column: "DISTINCT board_view.idx", // 집계함수 할 컬럼
+                                    as: "total_view", // 필수값
+                                },
+                                {
+                                    type: "COUNT", // 집계함수
+                                    column: "DISTINCT board_like.idx", // 집계함수 할 컬럼
+                                    as: "total_like", // 필수값
+                                },
+                            ]
+                        },
                     }
 
                     if(this.search_value != "") {
@@ -143,21 +178,18 @@ $componentName = str_replace(".php","",basename(__FILE__));
                     await this.$getsData(filter,this.rows);
                 },
                 goView(item) {
-                    console.log(this.$jd.lib.normalizeUrl("/user/board.php",{
+                    return this.$jd.lib.normalizeUrl("",{
                         mode : "view",
                         setting_idx : this.setting.idx,
-                        primary : item.primary
-                    }))
-                    return this.$jd.lib.normalizeUrl("/user/board.php",{
-                        mode : "view",
-                        setting_idx : this.setting.idx,
-                        primary : item.primary
+                        primary : item.primary,
+                        component : this.component,
                     })
                 },
                 goInput() {
-                    this.$jd.lib.href("/user/board.php",{
+                    window.location.href = this.$jd.lib.normalizeUrl("",{
                         mode : "input",
-                        setting_idx : this.setting.idx,
+                        setting_idx : this.setting.primary,
+                        component : this.component,
                     })
                 }
             },
@@ -171,9 +203,7 @@ $componentName = str_replace(".php","",basename(__FILE__));
 </script>
 
 <style>
-    body {
-        padding-top: 70px;  /* 헤더 높이에 맞게 조정 (보통 56~70px) */
-    }
+
     /* 게시판 제목 */
     .container h3 {
         font-weight: 600;

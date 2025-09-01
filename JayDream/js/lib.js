@@ -259,6 +259,11 @@ class JayDreamLib {
 
     normalizeUrl(url, obj = null) {
         try {
+            // url이 빈 값이면 현재 페이지 URL로 설정
+            if (!url || url.trim() === "") {
+                url = window.location.href;
+            }
+
             // 절대 URL이 아니면 현재 origin 기준으로 생성
             const urlObj = url.startsWith("http")
                 ? new URL(url)
@@ -267,8 +272,9 @@ class JayDreamLib {
             // path 정규화
             urlObj.pathname = urlObj.pathname.replace(/\/{2,}/g, '/');
 
-            // obj 있으면 GET 파라미터 추가
+            // obj가 있으면 → 기존 query 전부 초기화 후 새로 세팅
             if (obj && typeof obj === "object") {
+                urlObj.search = ""; // ✅ 기존 쿼리 초기화
                 for (const [key, value] of Object.entries(obj)) {
                     urlObj.searchParams.set(key, value);
                 }

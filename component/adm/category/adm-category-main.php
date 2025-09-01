@@ -8,6 +8,10 @@ $componentName = str_replace(".php","",basename(__FILE__));
             <!-- Page Heading -->
             <div class="d-sm-flex align-items-center justify-content-between mb-4">
                 <h1 class="h3 mb-0 text-gray-800">카테고리 설정</h1>
+
+                <p class="mt-2 text-muted small">
+                    드래그로 순서를 변경할수있습니다. * 같은 뎁스끼리만 순서 변경가능합니다.
+                </p>
             </div>
 
             <div class="mb-3 text-right">

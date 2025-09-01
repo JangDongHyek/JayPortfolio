@@ -3,7 +3,7 @@ $componentName = str_replace(".php","",basename(__FILE__));
 ?>
 <script type="text/x-template" id="<?=$componentName?>-template">
     <div v-if="load">
-        <component :is="isComponent" :setting="row" :user="user" :primary="primary"></component>
+        <component :is="isComponent" :setting="row" :user="user" :primary="primary" :component="component"></component>
     </div>
 
     <div v-if="!load"><div class="loader"></div></div>
@@ -16,6 +16,7 @@ $componentName = str_replace(".php","",basename(__FILE__));
                 primary : {type : String, default : ""},
                 mode : {type : String, default : ""},
                 setting_idx : {type : String, default : ""},
+                component : {type : String, default : ""},
                 user : {type : Object, default : null},
             },
             data: function () {

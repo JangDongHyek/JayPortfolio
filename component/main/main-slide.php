@@ -58,6 +58,10 @@ $componentName = str_replace(".php", "", basename(__FILE__));
                 await this.$getsData({
                     table: "slide",
                     file_db: true,
+
+                    order_by: [
+                        { column: "priority", value: "ASC" },
+                    ],
                 }, this.rows);
 
                 this.load = true;

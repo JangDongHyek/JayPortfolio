@@ -27,4 +27,3 @@ include_once "./head.php";
     </div>
 <?php include_once "./footer.php"; ?>
 
-<?$jd->componentLoad("/user");?>

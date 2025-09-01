@@ -8,63 +8,31 @@ $componentName = str_replace(".php","",basename(__FILE__));
 
             <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-4">
                 <!-- 게시글 카드 1 -->
-                <div class="col">
+                <div class="col" v-for="item in rows">
+                    <a :href="goView(item)">
                     <div class="card h-100 shadow-sm">
-                        <img src="/JayDream/resource/slide/1/P-68b00931666e413.png" class="card-img-top" alt="썸네일">
+                        <img :src="$jd.url + item.$jd_file.data[0].src" class="card-img-top" alt="썸네일">
                         <div class="card-body">
                             <h5 class="card-title">
-                                <a href="view.html" class="text-decoration-none text-dark">첫 번째 게시글 제목</a>
+                                <a href="view.html" class="text-decoration-none text-dark">{{item.name}}</a>
                             </h5>
-                            <p class="card-text text-truncate">
-                                게시글 내용 일부 미리보기입니다. 두세 줄 정도 잘려서 보여주면 좋아요.
+                            <p class="card-text text-truncate" v-html="item.content">
                             </p>
                         </div>
                         <div class="card-footer small text-muted d-flex justify-content-between">
-                            <span>관리자</span>
-                            <span>2025-08-31</span>
+                            <span>{{item.$user__name}}</span>
+                            <span>{{item.insert_date.formatDate('yyyy-mm-dd')}}</span>
                         </div>
                     </div>
-                </div>
-
-                <!-- 게시글 카드 2 -->
-                <div class="col">
-                    <div class="card h-100 shadow-sm">
-                        <img src="https://via.placeholder.com/400x250/ffc107/ffffff" class="card-img-top" alt="썸네일">
-                        <div class="card-body">
-                            <h5 class="card-title">
-                                <a href="view.html" class="text-decoration-none text-dark">두 번째 게시글 제목</a>
-                            </h5>
-                            <p class="card-text text-truncate">
-                                카드형 게시판은 갤러리나 뉴스 리스트로 활용하기 좋아요.
-                            </p>
-                        </div>
-                        <div class="card-footer small text-muted d-flex justify-content-between">
-                            <span>홍길동</span>
-                            <span>2025-08-30</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- 게시글 카드 3 -->
-                <div class="col">
-                    <div class="card h-100 shadow-sm">
-                        <img src="https://via.placeholder.com/400x250/0d6efd/ffffff" class="card-img-top" alt="썸네일">
-                        <div class="card-body">
-                            <h5 class="card-title">
-                                <a href="view.html" class="text-decoration-none text-dark">세 번째 게시글 제목</a>
-                            </h5>
-                            <p class="card-text text-truncate">
-                                Bootstrap의 card 컴포넌트로 간단하게 만들 수 있습니다.
-                            </p>
-                        </div>
-                        <div class="card-footer small text-muted d-flex justify-content-between">
-                            <span>유저1</span>
-                            <span>2025-08-29</span>
-                        </div>
-                    </div>
+                    </a>
                 </div>
             </div>
+            <div class="d-flex justify-content-end">
+                <button type="submit" class="btn btn-primary" @click="goInput()">등록</button>
+            </div>
         </div>
+
+        <item-paging :paging="paging" @change="getData()"></item-paging>
     </div>
 
     <div v-if="!load"><div class="loader"></div></div>
@@ -75,6 +43,9 @@ $componentName = str_replace(".php","",basename(__FILE__));
             template: "#<?=$componentName?>-template",
             props: {
                 primary : {type : String, default : ""},
+                component : {type : String, default : ""},
+                setting : {type : Object, default : null},
+                user : {type : Object, default : null},
             },
             data: function () {
                 return {
@@ -84,6 +55,14 @@ $componentName = str_replace(".php","",basename(__FILE__));
 
                     row: {},
                     rows : [],
+
+                    paging : {
+                        page: 1,
+                        limit: this.setting.page_count, // 해당 값 수정시 페이지에 노출되는 게시글 갯수가 바뀜
+                        count: 0,
+                    },
+
+                    search_value : "",
                 };
             },
             async created() {
@@ -91,8 +70,8 @@ $componentName = str_replace(".php","",basename(__FILE__));
             },
             async mounted() {
                 //this.row = await this.$getData({table : "",});
-                //await this.$getsData({table : "",},this.rows);
-
+                // await this.$getsData({table : "",},this.rows);
+                await this.getData();
                 this.load = true;
 
                 this.$nextTick(async () => {
@@ -103,7 +82,107 @@ $componentName = str_replace(".php","",basename(__FILE__));
 
             },
             methods: {
+                async getData() {
+                    let filter = {
+                        table : "board",
+                        file_db : true,
+                        paging : this.paging,
 
+                        where: [
+                            {column: "setting_idx",value: this.setting.idx},
+                        ],
+
+                        joins: [
+                            {
+                                table: "user",
+                                base: "user_idx",               // filter 테이블의 연결 key
+                                foreign: "idx",            // join 테이블의 연결 key
+                                type: "LEFT",             // INNER, LEFT, RIGHT
+                                select_column: ["name"], // 조회할 컬럼 $table__column 식으로 as되서 들어간다 || "*"
+                            },
+
+                            {
+                                table: "board_view",
+                                base: "idx",               // filter 테이블의 연결 key
+                                foreign: "board_idx",            // join 테이블의 연결 key
+                                type: "LEFT",             // INNER, LEFT, RIGHT
+                                select_column: ["idx"], // 조회할 컬럼 $table__column 식으로 as되서 들어간다 || "*"
+                            },
+
+                            {
+                                table: "board_like",
+                                base: "idx",               // filter 테이블의 연결 key
+                                foreign: "board_idx",            // join 테이블의 연결 key
+                                type: "LEFT",             // INNER, LEFT, RIGHT
+                                select_column: ["idx"], // 조회할 컬럼 $table__column 식으로 as되서 들어간다 || "*"
+                            },
+                        ],
+
+                        group_bys: {
+                            by: ['board.idx'], // 그룹화 할 컬럼 * 앞에 테이블명시는 필수
+                            selects: [
+                                {
+                                    type: "COUNT", // 집계함수
+                                    column: "DISTINCT board_view.idx", // 집계함수 할 컬럼
+                                    as: "total_view", // 필수값
+                                },
+                                {
+                                    type: "COUNT", // 집계함수
+                                    column: "DISTINCT board_like.idx", // 집계함수 할 컬럼
+                                    as: "total_like", // 필수값
+                                },
+                            ]
+                        },
+                    }
+
+                    if(this.search_value != "") {
+                        filter.blocks = [
+                            { // filter 형식으로 넣어주면된다 , 객체 하나당 () 괄호 조건문이 꾸며진다
+                                logical: "AND", // 괄호 전 어떤 논리 연사자가 들어갈지
+                                where: [
+                                    {
+                                        column: "name",             // join 조건시 user.idx
+                                        value: `%${this.search_value}%`,              // LIKE일시 %% 필수 || relations일시  $parent.idx , 공백일경우 __null__ , null 값인경우 null
+                                        logical: "OR",         // AND,OR,AND NOT
+                                        operator: "LIKE",          // = ,!= >= <=, LIKE,
+                                        encrypt: false,        // true시 벨류가 암호화된 값으로 들어감
+                                    },
+                                    {
+                                        column: "content",             // join 조건시 user.idx
+                                        value: `%${this.search_value}%`,              // LIKE일시 %% 필수 || relations일시  $parent.idx , 공백일경우 __null__ , null 값인경우 null
+                                        logical: "OR",         // AND,OR,AND NOT
+                                        operator: "LIKE",          // = ,!= >= <=, LIKE,
+                                        encrypt: false,        // true시 벨류가 암호화된 값으로 들어감
+                                    },
+                                    {
+                                        column: "user.name",             // join 조건시 user.idx
+                                        value: `%${this.search_value}%`,              // LIKE일시 %% 필수 || relations일시  $parent.idx , 공백일경우 __null__ , null 값인경우 null
+                                        logical: "OR",         // AND,OR,AND NOT
+                                        operator: "LIKE",          // = ,!= >= <=, LIKE,
+                                        encrypt: false,        // true시 벨류가 암호화된 값으로 들어감
+                                    },
+                                ],
+                            },
+                        ];
+                    }
+
+                    await this.$getsData(filter,this.rows);
+                },
+                goView(item) {
+                    return this.$jd.lib.normalizeUrl("",{
+                        mode : "view",
+                        setting_idx : this.setting.idx,
+                        primary : item.primary,
+                        component : this.component,
+                    })
+                },
+                goInput() {
+                    window.location.href = this.$jd.lib.normalizeUrl("",{
+                        mode : "input",
+                        setting_idx : this.setting.primary,
+                        component : this.component,
+                    })
+                }
             },
             computed: {
 

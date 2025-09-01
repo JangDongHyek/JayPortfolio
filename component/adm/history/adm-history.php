@@ -7,7 +7,7 @@ $componentName = str_replace(".php","",basename(__FILE__));
 
             <!-- Page Heading -->
             <div class="d-sm-flex align-items-center justify-content-between mb-4">
-                <h1 class="h3 mb-0 text-gray-800">메인 슬라이드 설정</h1>
+                <h1 class="h3 mb-0 text-gray-800">연혁 설정</h1>
                 <p class="mt-2 text-muted small">
                     드래그로 순서를 변경할수있습니다.
                 </p>
@@ -22,7 +22,9 @@ $componentName = str_replace(".php","",basename(__FILE__));
                     <thead>
                     <tr>
                         <th>이미지</th>
+                        <th>년월</th>
                         <th>제목</th>
+                        <th>내용</th>
                         <th>기능</th>
                     </tr>
                     </thead>
@@ -34,7 +36,9 @@ $componentName = str_replace(".php","",basename(__FILE__));
                                         <img :src="$jd.url + item.$jd_file.data[0].src" style="width: 100px;height: 100px;">
                                     </template>
                                 </td>
+                                <td>{{item.year}}</td>
                                 <td>{{item.name}}</td>
+                                <td>{{item.content}}</td>
                                 <td>
                                     <button class="btn btn-sm btn-warning" @click="modal.primary = item.idx; modal.status = true;">수정</button>
                                     <button class="btn btn-sm btn-danger" @click="$deleteData(item)">삭제</button>
@@ -46,7 +50,7 @@ $componentName = str_replace(".php","",basename(__FILE__));
             </div>
         </div>
 
-        <adm-slide-input v-model="modal" @update:modelValue="value => $emit('update:modelValue', value)"></adm-slide-input>
+        <adm-history-input v-model="modal" @update:modelValue="value => $emit('update:modelValue', value)"></adm-history-input>
     </div>
 
     <div v-if="!load"><div class="loader"></div></div>
@@ -82,7 +86,7 @@ $componentName = str_replace(".php","",basename(__FILE__));
             async mounted() {
                 //this.row = await this.$getData({table : "",});
                 await this.$getsData({
-                    table : "slide",
+                    table : "company_history",
                     file_db : true,
 
                     order_by: [
@@ -169,4 +173,6 @@ $componentName = str_replace(".php","",basename(__FILE__));
     tbody tr:hover {
         background: #f5f6fa;
     }
+
+
 </style>
